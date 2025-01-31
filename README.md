@@ -8,13 +8,26 @@ Puis d'en faire un site où les élèves pourront "collectionner" les sujets qu'
 ## Language
 
 Python
+
 SQL (pas encore)
+
 HTML/CSS (pas encore)
+
 
 ## Libraires utiliés python utiliés
 
 requests
+
 BeautifulSoup
+
 os
+
 re
+
 PdfReader (PyPDF2)
+
+sqlite3
+
+bs4
+
+importlib
