@@ -1,32 +1,63 @@
-# Creation des classes pour la base de donnees
-print(f"Chargement de {__file__}")
-
 import sqlite3
 
 lien_db = "database.db"
-connexion = sqlite3.connect(lien_db)
 
-## Connexion a la base de donnee
+## Connexion à la base de données
 def connect_db():
-    connexion = sqlite3.connect(lien_db)
-    return connexion
+    return sqlite3.connect(lien_db)
 
-## class Epreuve 
+## Création de la table si elle n'existe pas
+connexion = connect_db()
 cursor = connexion.cursor()
-cursor.execute("CREATE TABLE IF NOT EXISTS epreuves (nom TEXT, filiere TEXT, nombre INTEGER)")
-connexion.commit()    
+cursor.execute(
+    "CREATE TABLE IF NOT EXISTS epreuves (nom TEXT PRIMARY KEY, filiere TEXT, matiere TEXT, nombre INTEGER)"
+)
+connexion.commit()
+connexion.close()
 
+## Classe Epreuve avec gestion de la base
 class Epreuve:
-    def __init__(self, nom, filiere):
+    def __init__(self, nom, filiere, matiere):
         self.nom = nom
         self.filiere = filiere
         self.nombre = 0
+        self.matiere = matiere
+
         connexion = connect_db()
         cursor = connexion.cursor()
-        cursor.execute("INSERT INTO epreuves VALUES (?, ?, ?)", (self.nom, self.filiere, self.nombre))
+
+        # Vérifie si l'épreuve existe déjà en base
+        cursor.execute("SELECT nombre FROM epreuves WHERE nom = ?", (self.nom,))
+        result = cursor.fetchone()
+        
+        if result is None:
+            # Insérer une nouvelle épreuve
+            cursor.execute("INSERT INTO epreuves VALUES (?, ?, ?, ?)", (self.nom, self.filiere, self.matiere, self.nombre))
+        else:
+            # Charger le nombre d'occurrences depuis la base
+            self.nombre = result[0]
+
         connexion.commit()
+        connexion.close()
 
     def incr(self):
+        """ Incrémente le nombre d'occurrences et met à jour la base de données """
         self.nombre += 1
+        connexion = connect_db()
+        cursor = connexion.cursor()
+        cursor.execute("UPDATE epreuves SET nombre = ? WHERE nom = ?", (self.nombre, self.nom))
+        connexion.commit()
+        connexion.close()
 
+    def modif_matiere(self, nv_nom):
+        """ Modifie le nom de la matière et met à jour la base de données """
+        self.matiere = nv_nom
+        connexion = connect_db()
+        cursor = connexion.cursor()
+        cursor.execute("UPDATE epreuves SET matiere = ? WHERE nom = ?", (self.matiere, self.nom))
+        connexion.commit()
+        connexion.close()
+
+    def __str__(self):
+        return f"Epreuve : {self.nom} - {self.filiere} - {self.matiere} - {self.nombre}"
 
