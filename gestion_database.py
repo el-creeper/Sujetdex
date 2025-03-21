@@ -10,7 +10,15 @@ def connect_db():
 connexion = connect_db()
 cursor = connexion.cursor()
 cursor.execute(
-    "CREATE TABLE IF NOT EXISTS epreuves (nom TEXT PRIMARY KEY, filiere TEXT, matiere TEXT, nombre INTEGER)"
+    """CREATE TABLE IF NOT EXISTS epreuves (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    nom TEXT NOT NULL,
+    filiere TEXT NOT NULL,
+    matiere TEXT NOT NULL,
+    banque TEXT NOT NULL,
+    nombre INTEGER NOT NULL
+);
+"""
 )
 connexion.commit()
 connexion.close()
@@ -57,6 +65,7 @@ class Epreuve:
         cursor.execute("UPDATE epreuves SET matiere = ? WHERE nom = ?", (self.matiere, self.nom))
         connexion.commit()
         connexion.close()
+
 
     def __str__(self):
         return f"Epreuve : {self.nom} - {self.filiere} - {self.matiere} - {self.nombre}"
