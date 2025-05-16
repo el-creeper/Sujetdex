@@ -29,3 +29,4 @@ Puis d'en faire un site où les élèves pourront "collectionner" les sujets qu'
 - sklearn (KMeans, silhouette_score, TfidfVectorizer)  
 - copy  
 - unicodedata  
+- 
